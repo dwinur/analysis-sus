@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """
-Script to cleanse CSV data and create a new CSV for SUS (System Usability Scale) calculations.
+Script to cleanse CSV data for SUS (System Usability Scale) analysis.
 
-SUS Calculation Formula:
-- For odd-numbered questions (1, 3, 5, 7, 9): score contribution = scale position - 1
-- For even-numbered questions (2, 4, 6, 8, 10): score contribution = 5 - scale position
-- Total SUS score = sum of all contributions * 2.5
-- SUS scores range from 0 to 100
+This script cleanses the survey data and creates a new CSV with:
+- Demographic information
+- SUS question responses (raw scores 1-5)
+- No calculation, just data cleansing and formatting
 """
 
 import csv
 import sys
-from typing import List, Dict, Tuple
+from typing import List, Tuple
 
 
 def read_csv_data(filename: str) -> Tuple[List[str], List[List[str]]]:
@@ -23,39 +22,9 @@ def read_csv_data(filename: str) -> Tuple[List[str], List[List[str]]]:
     return headers, rows
 
 
-def calculate_sus_score(sus_responses: List[int]) -> float:
-    """
-    Calculate SUS score from 10 SUS question responses.
-    
-    Args:
-        sus_responses: List of 10 responses (values 1-5)
-    
-    Returns:
-        SUS score (0-100)
-    """
-    if len(sus_responses) != 10:
-        raise ValueError(f"Expected 10 SUS responses, got {len(sus_responses)}")
-    
-    total = 0
-    for i, response in enumerate(sus_responses):
-        if response < 1 or response > 5:
-            raise ValueError(f"Invalid SUS response: {response}. Must be 1-5.")
-        
-        # Odd-numbered questions (index 0, 2, 4, 6, 8): contribution = response - 1
-        # Even-numbered questions (index 1, 3, 5, 7, 9): contribution = 5 - response
-        if i % 2 == 0:  # Odd questions (1st, 3rd, 5th, etc.)
-            total += response - 1
-        else:  # Even questions (2nd, 4th, 6th, etc.)
-            total += 5 - response
-    
-    # Multiply by 2.5 to get final SUS score
-    sus_score = total * 2.5
-    return sus_score
-
-
 def cleanse_data_and_create_sus_csv(input_file: str, output_file: str):
     """
-    Cleanse data and create new CSV with SUS calculations.
+    Cleanse data and create new CSV with demographic and SUS scoring data only.
     
     Args:
         input_file: Path to input CSV file
@@ -71,7 +40,7 @@ def cleanse_data_and_create_sus_csv(input_file: str, output_file: str):
     # SUS questions are in columns 10-19 (0-indexed)
     sus_question_indices = list(range(10, 20))
     
-    # Create output headers
+    # Create output headers - NO SUS_Score column
     output_headers = [
         'Respondent_ID',
         'Timestamp',
@@ -93,8 +62,7 @@ def cleanse_data_and_create_sus_csv(input_file: str, output_file: str):
         'SUS_Q7',
         'SUS_Q8',
         'SUS_Q9',
-        'SUS_Q10',
-        'SUS_Score'
+        'SUS_Q10'
     ]
     
     # Process data
@@ -109,7 +77,7 @@ def cleanse_data_and_create_sus_csv(input_file: str, output_file: str):
                 skipped_rows += 1
                 continue
             
-            # Extract SUS responses
+            # Extract and validate SUS responses
             sus_responses = []
             for col_idx in sus_question_indices:
                 value = row[col_idx].strip()
@@ -123,10 +91,7 @@ def cleanse_data_and_create_sus_csv(input_file: str, output_file: str):
                 except ValueError as e:
                     raise ValueError(f"Invalid SUS response at column {col_idx}: {value}")
             
-            # Calculate SUS score
-            sus_score = calculate_sus_score(sus_responses)
-            
-            # Create output row
+            # Create output row - NO SUS score calculation
             output_row = [
                 row_idx + 1,  # Respondent ID (1-indexed)
                 row[0],  # Timestamp
@@ -139,7 +104,7 @@ def cleanse_data_and_create_sus_csv(input_file: str, output_file: str):
                 row[7].strip(),  # Perangkat
                 row[8].strip(),  # Frekuensi Penggunaan
                 row[9].strip(),  # Durasi Penggunaan
-            ] + sus_responses + [sus_score]
+            ] + sus_responses  # Just append the raw SUS responses
             
             output_rows.append(output_row)
             
@@ -160,40 +125,37 @@ def cleanse_data_and_create_sus_csv(input_file: str, output_file: str):
     print(f"Total input rows: {len(rows)}")
     print(f"Rows processed successfully: {len(output_rows)}")
     print(f"Rows skipped: {skipped_rows}")
-    
-    if output_rows:
-        sus_scores = [row[-1] for row in output_rows]
-        avg_sus = sum(sus_scores) / len(sus_scores)
-        min_sus = min(sus_scores)
-        max_sus = max(sus_scores)
-        
-        print(f"\n=== SUS Score Statistics ===")
-        print(f"Average SUS Score: {avg_sus:.2f}")
-        print(f"Minimum SUS Score: {min_sus:.2f}")
-        print(f"Maximum SUS Score: {max_sus:.2f}")
-        print(f"Number of responses: {len(sus_scores)}")
-        
-        # SUS score interpretation
-        print(f"\n=== SUS Score Interpretation ===")
-        print(f"SUS scores above 68 are considered above average")
-        print(f"SUS scores below 68 are considered below average")
-        if avg_sus >= 68:
-            print(f"Result: The average SUS score ({avg_sus:.2f}) is ABOVE AVERAGE")
-        else:
-            print(f"Result: The average SUS score ({avg_sus:.2f}) is BELOW AVERAGE")
+    print(f"Output columns: {len(output_headers)}")
+    print(f"  - Demographic fields: 11")
+    print(f"  - SUS question responses: 10")
     
     print(f"\nCleansing complete! Output saved to: {output_file}")
 
 
 def main():
     """Main function."""
-    input_file = 'UX GEN AI (Jawaban) - Form Responses 1.csv'
-    output_file = 'SUS_Calculation_Results.csv'
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description='Cleanse CSV data for SUS (System Usability Scale) analysis'
+    )
+    parser.add_argument(
+        '--input',
+        default='UX GEN AI (Jawaban) - Form Responses 1.csv',
+        help='Input CSV file (default: UX GEN AI (Jawaban) - Form Responses 1.csv)'
+    )
+    parser.add_argument(
+        '--output',
+        default='SUS_Cleansed_Data.csv',
+        help='Output CSV file (default: SUS_Cleansed_Data.csv)'
+    )
+    
+    args = parser.parse_args()
     
     try:
-        cleanse_data_and_create_sus_csv(input_file, output_file)
+        cleanse_data_and_create_sus_csv(args.input, args.output)
     except FileNotFoundError:
-        print(f"Error: Input file '{input_file}' not found.")
+        print(f"Error: Input file '{args.input}' not found.")
         sys.exit(1)
     except Exception as e:
         print(f"Error: {e}")
