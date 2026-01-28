@@ -102,19 +102,21 @@ The SPSS syntax files are designed for IBM SPSS Statistics Version 26. To use th
    - `SUS_Gemini_Cleansed.csv` for Gemini syntax
 5. Run the entire syntax file (Run → All) or select specific sections to run
 
-**The SPSS syntax files include:**
-- Data import and variable labeling
-- SUS score calculation (using the standard SUS formula)
-- SUS grade classification (A-F scale)
-- SUS acceptability classification (Acceptable/Marginal/Not Acceptable)
-- Descriptive statistics
-- Frequency analysis
-- Reliability analysis (Cronbach's Alpha)
-- Cross-tabulation analysis by demographics
-- Histogram and visualizations
-- Normality tests
-- One-sample t-test against acceptability threshold (68)
-- Data export to SPSS .sav format and CSV
+**The SPSS syntax files include (in order):**
+
+| Step | Description |
+|------|-------------|
+| Langkah 0 | Import data dari CSV dengan labeling variabel |
+| Langkah 1 | Normalisasi data (N_Q1 - N_Q10) |
+| Langkah 2 | Hitung skor akhir SUS (0-100) |
+| Langkah 3 | Verifikasi hasil (tampilkan sample data) |
+| Langkah 4 | Uji validitas dan reliabilitas (Cronbach's Alpha) |
+| Langkah 5 | Statistik deskriptif skor SUS |
+| Langkah 6 | Statistik deskriptif per item |
+| Langkah 7 | Frekuensi demografi |
+| Langkah 8 | Klasifikasi SUS Grade (A-F) |
+| Langkah 9 | Klasifikasi Acceptability |
+| Langkah 10 | Simpan hasil analisis (.sav) |
 
 ### Output Format
 
@@ -124,9 +126,9 @@ The output CSV files (`SUS_ChatGPT_Cleansed.csv` and `SUS_Gemini_Cleansed.csv`) 
 - **Timestamp**: Survey submission timestamp
 - **Demographic fields**: Nama, Usia, Jenis_Kelamin, Pendidikan, Pekerjaan
 - **Usage fields**: Aplikasi_GenAI, Perangkat, Frekuensi_Penggunaan, Durasi_Penggunaan
-- **SUS_Q1 to SUS_Q10**: Individual SUS question responses (1-5)
+- **Q1 to Q10**: Individual SUS question responses (1-5)
 
-**Note**: The cleansed CSV files contain only the raw data and demographic information. SUS score calculation is performed in the SPSS syntax files using the standard SUS formula.
+**Note**: The cleansed CSV files contain only the raw data and demographic information. SUS score calculation (normalization and scoring) is performed in the SPSS syntax files using the standard SUS formula.
 
 ## Data Summary
 

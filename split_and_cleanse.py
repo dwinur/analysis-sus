@@ -43,7 +43,7 @@ def cleanse_and_split_data(input_file: str, chatgpt_output: str, gemini_output: 
     sus_question_indices = list(range(10, 20))
     app_column_index = 6  # Column for application type
     
-    # Create output headers
+    # Create output headers (using simple Q1-Q10 names for SPSS compatibility)
     output_headers = [
         'Respondent_ID',
         'Timestamp',
@@ -56,16 +56,16 @@ def cleanse_and_split_data(input_file: str, chatgpt_output: str, gemini_output: 
         'Perangkat',
         'Frekuensi_Penggunaan',
         'Durasi_Penggunaan',
-        'SUS_Q1',
-        'SUS_Q2',
-        'SUS_Q3',
-        'SUS_Q4',
-        'SUS_Q5',
-        'SUS_Q6',
-        'SUS_Q7',
-        'SUS_Q8',
-        'SUS_Q9',
-        'SUS_Q10'
+        'Q1',
+        'Q2',
+        'Q3',
+        'Q4',
+        'Q5',
+        'Q6',
+        'Q7',
+        'Q8',
+        'Q9',
+        'Q10'
     ]
     
     # Process and split data

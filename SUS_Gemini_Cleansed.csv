@@ -1,4 +1,4 @@
-Respondent_ID,Timestamp,Nama,Usia,Jenis_Kelamin,Pendidikan,Pekerjaan,Aplikasi_GenAI,Perangkat,Frekuensi_Penggunaan,Durasi_Penggunaan,SUS_Q1,SUS_Q2,SUS_Q3,SUS_Q4,SUS_Q5,SUS_Q6,SUS_Q7,SUS_Q8,SUS_Q9,SUS_Q10
+Respondent_ID,Timestamp,Nama,Usia,Jenis_Kelamin,Pendidikan,Pekerjaan,Aplikasi_GenAI,Perangkat,Frekuensi_Penggunaan,Durasi_Penggunaan,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,Q10
 1,22/01/2026 21:29:50,PUTRI KARTIKA WISESA,25-34 tahun,Perempuan,Diploma (D1/D2/D3),IRT,Gemini (Google),Android,Beberapa kali dalam sebulan,Lebih dari 1 tahun,2,3,5,1,4,2,5,1,3,1
 2,22/01/2026 21:30:55,Septian yoga,25-34 tahun,Laki-Laki,Diploma (D1/D2/D3),Pegawai Negeri/BUMN,Gemini (Google),Android,Setiap hari,Lebih dari 1 tahun,5,2,5,2,4,4,5,2,5,4
 3,22/01/2026 21:54:58,Ronaldo,35-44 tahun,Laki-Laki,Diploma (D1/D2/D3),Profesional IT/Software Developer,Gemini (Google),iOS (iPhone),Beberapa kali dalam sebulan,7-12 bulan,3,1,5,1,4,3,5,1,3,1

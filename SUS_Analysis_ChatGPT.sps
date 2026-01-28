@@ -1,13 +1,12 @@
-* ============================================================.
-* SPSS Version 26 Syntax for SUS Analysis - ChatGPT (OpenAI).
-* System Usability Scale (SUS) Data Analysis.
-* ============================================================.
+* ====================================================================.
+* SYNTAX LENGKAP ANALISIS SUS - ChatGPT (OpenAI).
+* Untuk IBM SPSS Statistics 26.
+* ====================================================================.
 
-* ============================================================.
-* SECTION 1: DATA IMPORT.
-* ============================================================.
+* ====================================================================.
+* LANGKAH 0: IMPORT DATA DARI CSV.
+* ====================================================================.
 
-* Read the cleansed CSV data file.
 GET DATA
   /TYPE=TXT
   /FILE="SUS_ChatGPT_Cleansed.csv"
@@ -29,23 +28,20 @@ GET DATA
     Perangkat A20
     Frekuensi_Penggunaan A30
     Durasi_Penggunaan A25
-    SUS_Q1 F1.0
-    SUS_Q2 F1.0
-    SUS_Q3 F1.0
-    SUS_Q4 F1.0
-    SUS_Q5 F1.0
-    SUS_Q6 F1.0
-    SUS_Q7 F1.0
-    SUS_Q8 F1.0
-    SUS_Q9 F1.0
-    SUS_Q10 F1.0.
+    Q1 F1.0
+    Q2 F1.0
+    Q3 F1.0
+    Q4 F1.0
+    Q5 F1.0
+    Q6 F1.0
+    Q7 F1.0
+    Q8 F1.0
+    Q9 F1.0
+    Q10 F1.0.
 CACHE.
 EXECUTE.
 
-* ============================================================.
-* SECTION 2: VARIABLE LABELS.
-* ============================================================.
-
+* Labeling variabel.
 VARIABLE LABELS
     Respondent_ID 'ID Responden'
     Timestamp 'Waktu Pengisian'
@@ -58,77 +54,132 @@ VARIABLE LABELS
     Perangkat 'Perangkat'
     Frekuensi_Penggunaan 'Frekuensi Penggunaan'
     Durasi_Penggunaan 'Durasi Penggunaan'
-    SUS_Q1 'Q1: Keinginan menggunakan secara rutin'
-    SUS_Q2 'Q2: Rumit dan membingungkan (R)'
-    SUS_Q3 'Q3: Mudah digunakan'
-    SUS_Q4 'Q4: Butuh bantuan ahli (R)'
-    SUS_Q5 'Q5: Fitur terintegrasi baik'
-    SUS_Q6 'Q6: Terlalu banyak ketidakkonsistenan (R)'
-    SUS_Q7 'Q7: Mudah dipelajari'
-    SUS_Q8 'Q8: Sulit dan merepotkan (R)'
-    SUS_Q9 'Q9: Percaya diri saat menggunakan'
-    SUS_Q10 'Q10: Perlu belajar banyak (R)'.
+    Q1 'Saya ingin sering menggunakan sistem ini'
+    Q2 'Sistem terlalu kompleks'
+    Q3 'Sistem mudah digunakan'
+    Q4 'Butuh bantuan teknis untuk menggunakan'
+    Q5 'Fungsi terintegrasi dengan baik'
+    Q6 'Banyak inkonsistensi dalam sistem'
+    Q7 'Orang lain akan cepat belajar'
+    Q8 'Sistem sangat rumit digunakan'
+    Q9 'Percaya diri menggunakan sistem'
+    Q10 'Harus belajar banyak sebelum menggunakan'.
 
-* ============================================================.
-* SECTION 3: VALUE LABELS FOR SUS QUESTIONS.
-* ============================================================.
-
-VALUE LABELS SUS_Q1 SUS_Q2 SUS_Q3 SUS_Q4 SUS_Q5 SUS_Q6 SUS_Q7 SUS_Q8 SUS_Q9 SUS_Q10
+VALUE LABELS Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10
     1 'Sangat Tidak Setuju'
     2 'Tidak Setuju'
     3 'Netral'
     4 'Setuju'
     5 'Sangat Setuju'.
 
-* ============================================================.
-* SECTION 4: SUS SCORE CALCULATION.
-* ============================================================.
+* ====================================================================.
+* LANGKAH 1: NORMALISASI DATA (WAJIB DILAKUKAN DULU!).
+* ====================================================================.
 
-* SUS Calculation Formula:
-* - For odd questions (Q1, Q3, Q5, Q7, Q9): Score = (response - 1)
-* - For even questions (Q2, Q4, Q6, Q8, Q10): Score = (5 - response)
-* - Total SUS Score = Sum of all 10 adjusted scores * 2.5.
+* Item Positif (Ganjil: 1, 3, 5, 7, 9) - Rumus: Skor - 1.
+COMPUTE N_Q1 = Q1 - 1.
+COMPUTE N_Q3 = Q3 - 1.
+COMPUTE N_Q5 = Q5 - 1.
+COMPUTE N_Q7 = Q7 - 1.
+COMPUTE N_Q9 = Q9 - 1.
 
-* Calculate adjusted scores for each question.
-COMPUTE SUS_Q1_Adj = SUS_Q1 - 1.
-COMPUTE SUS_Q2_Adj = 5 - SUS_Q2.
-COMPUTE SUS_Q3_Adj = SUS_Q3 - 1.
-COMPUTE SUS_Q4_Adj = 5 - SUS_Q4.
-COMPUTE SUS_Q5_Adj = SUS_Q5 - 1.
-COMPUTE SUS_Q6_Adj = 5 - SUS_Q6.
-COMPUTE SUS_Q7_Adj = SUS_Q7 - 1.
-COMPUTE SUS_Q8_Adj = 5 - SUS_Q8.
-COMPUTE SUS_Q9_Adj = SUS_Q9 - 1.
-COMPUTE SUS_Q10_Adj = 5 - SUS_Q10.
+* Item Negatif (Genap: 2, 4, 6, 8, 10) - Rumus: 5 - Skor.
+COMPUTE N_Q2 = 5 - Q2.
+COMPUTE N_Q4 = 5 - Q4.
+COMPUTE N_Q6 = 5 - Q6.
+COMPUTE N_Q8 = 5 - Q8.
+COMPUTE N_Q10 = 5 - Q10.
+
 EXECUTE.
 
-* Calculate total SUS Score (0-100 scale).
-COMPUTE SUS_Total = (SUS_Q1_Adj + SUS_Q2_Adj + SUS_Q3_Adj + SUS_Q4_Adj + 
-    SUS_Q5_Adj + SUS_Q6_Adj + SUS_Q7_Adj + SUS_Q8_Adj + SUS_Q9_Adj + SUS_Q10_Adj) * 2.5.
+* Labeling untuk variabel hasil normalisasi.
+VARIABLE LABELS
+N_Q1 'Q1 Normalized - Saya ingin sering menggunakan sistem ini'
+N_Q2 'Q2 Normalized - Sistem terlalu kompleks (reversed)'
+N_Q3 'Q3 Normalized - Sistem mudah digunakan'
+N_Q4 'Q4 Normalized - Butuh bantuan teknis (reversed)'
+N_Q5 'Q5 Normalized - Fungsi terintegrasi dengan baik'
+N_Q6 'Q6 Normalized - Banyak inkonsistensi (reversed)'
+N_Q7 'Q7 Normalized - Orang lain cepat belajar'
+N_Q8 'Q8 Normalized - Sistem sangat rumit (reversed)'
+N_Q9 'Q9 Normalized - Percaya diri menggunakan'
+N_Q10 'Q10 Normalized - Harus belajar banyak dulu (reversed)'.
+
+* ====================================================================.
+* LANGKAH 2: HITUNG SKOR AKHIR SUS (SETELAH NORMALISASI).
+* ====================================================================.
+
+COMPUTE SUS_Score = (N_Q1 + N_Q2 + N_Q3 + N_Q4 + N_Q5 + 
+                     N_Q6 + N_Q7 + N_Q8 + N_Q9 + N_Q10) * 2.5.
 EXECUTE.
 
-VARIABLE LABELS SUS_Total 'Total SUS Score (0-100)'.
+VARIABLE LABELS SUS_Score 'Skor Akhir System Usability Scale (0-100)'.
 
-* ============================================================.
-* SECTION 5: SUS GRADE CLASSIFICATION.
-* ============================================================.
+* ====================================================================.
+* LANGKAH 3: VERIFIKASI HASIL (CEK APAKAH BENAR).
+* ====================================================================.
 
-* Create SUS Grade based on score.
+* Tampilkan beberapa data untuk verifikasi.
+LIST VARIABLES=Q1 N_Q1 Q2 N_Q2 SUS_Score /CASES=5.
+
+* ====================================================================.
+* LANGKAH 4: UJI VALIDITAS DAN RELIABILITAS.
+* ====================================================================.
+
+RELIABILITY
+  /VARIABLES=N_Q1 N_Q2 N_Q3 N_Q4 N_Q5 N_Q6 N_Q7 N_Q8 N_Q9 N_Q10
+  /SCALE('System Usability Scale') ALL
+  /MODEL=ALPHA
+  /STATISTICS=DESCRIPTIVE SCALE CORR
+  /SUMMARY=TOTAL MEANS VARIANCE COV.
+
+* ====================================================================.
+* LANGKAH 5: STATISTIK DESKRIPTIF SKOR SUS.
+* ====================================================================.
+
+DESCRIPTIVES VARIABLES=SUS_Score
+  /STATISTICS=MEAN STDDEV MIN MAX.
+
+FREQUENCIES VARIABLES=SUS_Score
+  /FORMAT=NOTABLE
+  /STATISTICS=MEAN MEDIAN MODE STDDEV MIN MAX
+  /HISTOGRAM NORMAL
+  /ORDER=ANALYSIS.
+
+* ====================================================================.
+* LANGKAH 6: STATISTIK DESKRIPTIF PER ITEM.
+* ====================================================================.
+
+DESCRIPTIVES VARIABLES=Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10
+  /STATISTICS=MEAN STDDEV MIN MAX.
+
+* ====================================================================.
+* LANGKAH 7: FREKUENSI DEMOGRAFI.
+* ====================================================================.
+
+FREQUENCIES VARIABLES=Usia Jenis_Kelamin Pendidikan Pekerjaan Perangkat Frekuensi_Penggunaan Durasi_Penggunaan
+  /ORDER=ANALYSIS.
+
+* ====================================================================.
+* LANGKAH 8: KLASIFIKASI SUS GRADE.
+* ====================================================================.
+
+* Klasifikasi Grade berdasarkan skor SUS.
 * A: 90-100 (Excellent)
-* B: 80-89 (Good)
+* B: 80-89 (Good)  
 * C: 70-79 (Acceptable)
 * D: 60-69 (Poor)
 * F: Below 60 (Unacceptable).
 
 STRING SUS_Grade (A1).
-IF (SUS_Total >= 90) SUS_Grade = 'A'.
-IF (SUS_Total >= 80 AND SUS_Total < 90) SUS_Grade = 'B'.
-IF (SUS_Total >= 70 AND SUS_Total < 80) SUS_Grade = 'C'.
-IF (SUS_Total >= 60 AND SUS_Total < 70) SUS_Grade = 'D'.
-IF (SUS_Total < 60) SUS_Grade = 'F'.
+IF (SUS_Score >= 90) SUS_Grade = 'A'.
+IF (SUS_Score >= 80 AND SUS_Score < 90) SUS_Grade = 'B'.
+IF (SUS_Score >= 70 AND SUS_Score < 80) SUS_Grade = 'C'.
+IF (SUS_Score >= 60 AND SUS_Score < 70) SUS_Grade = 'D'.
+IF (SUS_Score < 60) SUS_Grade = 'F'.
 EXECUTE.
 
-VARIABLE LABELS SUS_Grade 'SUS Grade Classification'.
+VARIABLE LABELS SUS_Grade 'Klasifikasi Grade SUS'.
 
 VALUE LABELS SUS_Grade
     'A' 'Excellent (90-100)'
@@ -137,166 +188,40 @@ VALUE LABELS SUS_Grade
     'D' 'Poor (60-69)'
     'F' 'Unacceptable (<60)'.
 
-* ============================================================.
-* SECTION 6: SUS ACCEPTABILITY CLASSIFICATION.
-* ============================================================.
+FREQUENCIES VARIABLES=SUS_Grade
+  /ORDER=ANALYSIS.
 
-* Create Acceptability classification.
+* ====================================================================.
+* LANGKAH 9: KLASIFIKASI ACCEPTABILITY.
+* ====================================================================.
+
+* Klasifikasi Acceptability:
 * Acceptable: SUS >= 68
 * Marginal: SUS 52-67
 * Not Acceptable: SUS < 52.
 
-RECODE SUS_Total (LOWEST THRU 51.99=1) (52 THRU 67.99=2) (68 THRU HIGHEST=3) INTO SUS_Acceptability.
+RECODE SUS_Score (LOWEST THRU 51.99=1) (52 THRU 67.99=2) (68 THRU HIGHEST=3) INTO SUS_Acceptability.
 EXECUTE.
 
-VARIABLE LABELS SUS_Acceptability 'SUS Acceptability Classification'.
+VARIABLE LABELS SUS_Acceptability 'Klasifikasi Acceptability SUS'.
 
 VALUE LABELS SUS_Acceptability
     1 'Not Acceptable (Below 52)'
     2 'Marginal (52-67)'
     3 'Acceptable (68 and above)'.
 
-* ============================================================.
-* SECTION 7: DESCRIPTIVE STATISTICS.
-* ============================================================.
-
-* Descriptive statistics for raw SUS questions.
-TITLE 'Descriptive Statistics - Raw SUS Question Responses'.
-DESCRIPTIVES VARIABLES=SUS_Q1 SUS_Q2 SUS_Q3 SUS_Q4 SUS_Q5 SUS_Q6 SUS_Q7 SUS_Q8 SUS_Q9 SUS_Q10
-  /STATISTICS=MEAN STDDEV MIN MAX.
-
-* Descriptive statistics for SUS Total Score.
-TITLE 'Descriptive Statistics - SUS Total Score'.
-DESCRIPTIVES VARIABLES=SUS_Total
-  /STATISTICS=MEAN STDDEV MIN MAX.
-
-* ============================================================.
-* SECTION 8: FREQUENCY ANALYSIS.
-* ============================================================.
-
-* Frequency distribution for each SUS question.
-TITLE 'Frequency Distribution - SUS Question Responses'.
-FREQUENCIES VARIABLES=SUS_Q1 SUS_Q2 SUS_Q3 SUS_Q4 SUS_Q5 SUS_Q6 SUS_Q7 SUS_Q8 SUS_Q9 SUS_Q10
-  /ORDER=ANALYSIS.
-
-* Frequency distribution for SUS Grade.
-TITLE 'Frequency Distribution - SUS Grade'.
-FREQUENCIES VARIABLES=SUS_Grade
-  /ORDER=ANALYSIS.
-
-* Frequency distribution for Acceptability.
-TITLE 'Frequency Distribution - SUS Acceptability'.
 FREQUENCIES VARIABLES=SUS_Acceptability
   /ORDER=ANALYSIS.
 
-* ============================================================.
-* SECTION 9: DEMOGRAPHIC FREQUENCY ANALYSIS.
-* ============================================================.
+* ====================================================================.
+* LANGKAH 10: SIMPAN HASIL ANALISIS.
+* ====================================================================.
 
-TITLE 'Demographic Analysis'.
-FREQUENCIES VARIABLES=Usia Jenis_Kelamin Pendidikan Pekerjaan Perangkat Frekuensi_Penggunaan Durasi_Penggunaan
-  /ORDER=ANALYSIS.
-
-* ============================================================.
-* SECTION 10: RELIABILITY ANALYSIS (CRONBACH'S ALPHA).
-* ============================================================.
-
-* Reliability analysis for SUS scale.
-* Note: For proper Cronbach's Alpha calculation, we should reverse-code items first.
-
-TITLE 'Reliability Analysis - Cronbach Alpha'.
-RELIABILITY
-  /VARIABLES=SUS_Q1_Adj SUS_Q2_Adj SUS_Q3_Adj SUS_Q4_Adj SUS_Q5_Adj 
-             SUS_Q6_Adj SUS_Q7_Adj SUS_Q8_Adj SUS_Q9_Adj SUS_Q10_Adj
-  /SCALE('SUS Scale') ALL
-  /MODEL=ALPHA
-  /STATISTICS=DESCRIPTIVE SCALE
-  /SUMMARY=TOTAL.
-
-* ============================================================.
-* SECTION 11: CROSS-TABULATION ANALYSIS.
-* ============================================================.
-
-* SUS Grade by Demographics.
-TITLE 'Cross-tabulation: SUS Grade by Gender'.
-CROSSTABS
-  /TABLES=SUS_Grade BY Jenis_Kelamin
-  /FORMAT=AVALUE TABLES
-  /STATISTICS=CHISQ
-  /CELLS=COUNT ROW COLUMN TOTAL.
-
-TITLE 'Cross-tabulation: SUS Grade by Age Group'.
-CROSSTABS
-  /TABLES=SUS_Grade BY Usia
-  /FORMAT=AVALUE TABLES
-  /STATISTICS=CHISQ
-  /CELLS=COUNT ROW COLUMN TOTAL.
-
-TITLE 'Cross-tabulation: SUS Grade by Education'.
-CROSSTABS
-  /TABLES=SUS_Grade BY Pendidikan
-  /FORMAT=AVALUE TABLES
-  /STATISTICS=CHISQ
-  /CELLS=COUNT ROW COLUMN TOTAL.
-
-* ============================================================.
-* SECTION 12: HISTOGRAM AND VISUALIZATION.
-* ============================================================.
-
-* Histogram of SUS Total Score.
-TITLE 'Histogram - SUS Total Score Distribution'.
-GRAPH
-  /HISTOGRAM(NORMAL)=SUS_Total.
-
-* Bar chart of SUS Grade.
-TITLE 'Bar Chart - SUS Grade Distribution'.
-GRAPH
-  /BAR(SIMPLE)=COUNT BY SUS_Grade.
-
-* ============================================================.
-* SECTION 13: NORMALITY TEST.
-* ============================================================.
-
-TITLE 'Normality Test - SUS Total Score'.
-EXAMINE VARIABLES=SUS_Total
-  /PLOT BOXPLOT STEMLEAF HISTOGRAM NPPLOT
-  /COMPARE GROUPS
-  /STATISTICS DESCRIPTIVES
-  /CINTERVAL 95
-  /MISSING LISTWISE
-  /NOTOTAL.
-
-* ============================================================.
-* SECTION 14: ONE-SAMPLE T-TEST.
-* ============================================================.
-
-* Test if SUS score is significantly different from 68 (acceptability threshold).
-TITLE 'One-Sample T-Test: SUS Score vs Acceptability Threshold (68)'.
-T-TEST
-  /TESTVAL=68
-  /MISSING=ANALYSIS
-  /VARIABLES=SUS_Total
-  /CRITERIA=CI(.95).
-
-* ============================================================.
-* SECTION 15: SAVE PROCESSED DATA.
-* ============================================================.
-
-* Save the dataset with computed variables.
 SAVE OUTFILE='SUS_ChatGPT_Analysis_Results.sav'
   /COMPRESSED.
 
-* Export results to CSV for backup.
-SAVE TRANSLATE OUTFILE='SUS_ChatGPT_Analysis_Results.csv'
-  /TYPE=CSV
-  /ENCODING='UTF8'
-  /MAP
-  /REPLACE
-  /FIELDNAMES
-  /CELLS=VALUES.
+* ====================================================================.
+* SELESAI - HASIL LENGKAP ADA DI OUTPUT VIEWER.
+* ====================================================================.
 
-* ============================================================.
-* END OF SYNTAX FILE.
-* ============================================================.
-
-TITLE 'ChatGPT SUS Analysis Complete'.
+TITLE 'Analisis SUS ChatGPT (OpenAI) Selesai'.
