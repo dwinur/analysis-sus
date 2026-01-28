@@ -4,9 +4,19 @@ This repository contains tools for cleansing System Usability Scale (SUS) survey
 
 ## Files
 
+### Data Files
 - **UX GEN AI (Jawaban) - Form Responses 1.csv**: Original survey response data (125 respondents)
-- **cleanse_sus_data.py**: Python script to cleanse and format SUS data
-- **SUS_Cleansed_Data.csv**: Cleansed data with demographic information and SUS question responses
+- **SUS_Cleansed_Data.csv**: Combined cleansed data with demographic information and SUS question responses
+- **SUS_ChatGPT_Cleansed.csv**: Cleansed data for ChatGPT (OpenAI) users only (88 respondents)
+- **SUS_Gemini_Cleansed.csv**: Cleansed data for Gemini (Google) users only (37 respondents)
+
+### Python Scripts
+- **cleanse_sus_data.py**: Python script to cleanse and format SUS data (combined)
+- **split_and_cleanse.py**: Python script to split and cleanse data by application type (ChatGPT/Gemini)
+
+### SPSS Syntax Files (Version 26)
+- **SUS_Analysis_ChatGPT.sps**: SPSS 26 syntax for analyzing ChatGPT user data
+- **SUS_Analysis_Gemini.sps**: SPSS 26 syntax for analyzing Gemini user data
 
 ## SUS (System Usability Scale) Method
 
@@ -27,7 +37,34 @@ The System Usability Scale (SUS) is a widely used standardized questionnaire for
 
 ## Usage
 
-### Running the Data Cleansing Script
+### 1. Running the Split and Cleanse Script (Recommended)
+
+This script separates the data by application type and cleanses it:
+
+**Basic usage (with default filenames):**
+```bash
+python3 split_and_cleanse.py
+```
+
+**With custom input/output files:**
+```bash
+python3 split_and_cleanse.py --input mydata.csv --chatgpt-output chatgpt.csv --gemini-output gemini.csv
+```
+
+**View help:**
+```bash
+python3 split_and_cleanse.py --help
+```
+
+This script will:
+1. Read the original survey data
+2. Validate all SUS responses (must be 1-5)
+3. Separate data by application type (ChatGPT vs Gemini)
+4. Extract demographic information
+5. Extract the 10 SUS question responses
+6. Create separate cleansed CSV files for each application
+
+### 2. Running the Combined Data Cleansing Script
 
 **Basic usage (with default filenames):**
 ```bash
@@ -51,24 +88,58 @@ This script will:
 4. Extract the 10 SUS question responses
 5. Create a cleansed CSV file ready for SUS analysis
 
+### 3. Using SPSS Syntax Files (Version 26)
+
+The SPSS syntax files are designed for IBM SPSS Statistics Version 26. To use them:
+
+1. Open IBM SPSS Statistics Version 26
+2. Go to **File → Open → Syntax**
+3. Select the appropriate syntax file:
+   - `SUS_Analysis_ChatGPT.sps` for ChatGPT data analysis
+   - `SUS_Analysis_Gemini.sps` for Gemini data analysis
+4. Make sure the corresponding CSV file is in the same directory:
+   - `SUS_ChatGPT_Cleansed.csv` for ChatGPT syntax
+   - `SUS_Gemini_Cleansed.csv` for Gemini syntax
+5. Run the entire syntax file (Run → All) or select specific sections to run
+
+**The SPSS syntax files include (in order):**
+
+| Step | Description |
+|------|-------------|
+| Langkah 0 | Import data dari CSV dengan labeling variabel |
+| Langkah 1 | Normalisasi data (N_Q1 - N_Q10) |
+| Langkah 2 | Hitung skor akhir SUS (0-100) |
+| Langkah 3 | Verifikasi hasil (tampilkan sample data) |
+| Langkah 4 | Uji validitas dan reliabilitas (Cronbach's Alpha) |
+| Langkah 5 | Statistik deskriptif skor SUS |
+| Langkah 6 | Statistik deskriptif per item |
+| Langkah 7 | Frekuensi demografi |
+| Langkah 8 | Klasifikasi SUS Grade (A-F) |
+| Langkah 9 | Klasifikasi Acceptability |
+| Langkah 10 | Simpan hasil analisis (.sav) |
+
 ### Output Format
 
-The output CSV file (`SUS_Cleansed_Data.csv`) contains:
+The output CSV files (`SUS_ChatGPT_Cleansed.csv` and `SUS_Gemini_Cleansed.csv`) contain:
 
-- **Respondent_ID**: Unique identifier for each respondent
+- **Respondent_ID**: Unique identifier for each respondent (per application)
 - **Timestamp**: Survey submission timestamp
 - **Demographic fields**: Nama, Usia, Jenis_Kelamin, Pendidikan, Pekerjaan
 - **Usage fields**: Aplikasi_GenAI, Perangkat, Frekuensi_Penggunaan, Durasi_Penggunaan
-- **SUS_Q1 to SUS_Q10**: Individual SUS question responses (1-5)
+- **Q1 to Q10**: Individual SUS question responses (1-5)
 
-**Note**: This output contains only the raw data and demographic information. SUS score calculation is not included and can be done separately using the standard SUS formula if needed.
+**Note**: The cleansed CSV files contain only the raw data and demographic information. SUS score calculation (normalization and scoring) is performed in the SPSS syntax files using the standard SUS formula.
 
 ## Data Summary
 
 Based on the cleansing of 125 respondents:
 
-- **Total Respondents**: 125
-- **Applications**: ChatGPT (OpenAI) - 88 respondents (70.4%), Gemini (Google) - 37 respondents (29.6%)
+| Application | Respondents | Percentage |
+|-------------|-------------|------------|
+| ChatGPT (OpenAI) | 88 | 70.4% |
+| Gemini (Google) | 37 | 29.6% |
+| **Total** | **125** | **100%** |
+
 - **Output Fields**: 21 columns (11 demographic/usage + 10 SUS questions)
 
 ## Data Quality
@@ -81,8 +152,8 @@ The data cleansing process confirmed:
 
 ## Requirements
 
-- Python 3.x
-- No external dependencies required (uses standard library only)
+- Python 3.x (no external dependencies required)
+- IBM SPSS Statistics Version 26 (for running SPSS syntax files)
 
 ## License
 
