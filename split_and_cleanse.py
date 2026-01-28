@@ -11,7 +11,7 @@ This script:
 
 import csv
 import sys
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 
 
 def read_csv_data(filename: str) -> Tuple[List[str], List[List[str]]]:
@@ -163,8 +163,6 @@ def cleanse_and_split_data(input_file: str, chatgpt_output: str, gemini_output: 
     print(f"  - SUS question responses: 10")
     
     print(f"\nSplit and cleansing complete!")
-    
-    return len(chatgpt_rows), len(gemini_rows)
 
 
 def main():
