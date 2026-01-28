@@ -166,7 +166,7 @@ FREQUENCIES VARIABLES=Usia Jenis_Kelamin Pendidikan Pekerjaan Perangkat Frekuens
 
 * Klasifikasi Grade berdasarkan skor SUS.
 * A: 90-100 (Excellent)
-* B: 80-89 (Good)  
+* B: 80-89 (Good)
 * C: 70-79 (Acceptable)
 * D: 60-69 (Poor)
 * F: Below 60 (Unacceptable).
